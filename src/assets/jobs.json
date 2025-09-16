@@ -1,0 +1,28 @@
+[
+  {
+    "id": 1,
+    "title": "full Stack Django developer",
+    "company": "proptech",
+    "location": "remote",
+    "platform": "Indeed",
+    "platformApplied": "indeed",
+    "dateApplied": "2025-08-29T00:00:00.000Z",
+    "status": "pending - just applied",
+    "link": "www.facebook.com",
+    "resumeVersion": { "id": 1, "title": "developer" }
+  },
+  {
+    "id": 2,
+    "title": "Seasonal Production Assistant",
+    "company": "RecruitEasy",
+    "location": "paignton",
+    "platform": "Indeed",
+    "platformApplied": "RecruitEasy",
+    "dateApplied": "2025-08-29T00:00:00.000Z",
+    "status": "pending - just applied",
+    "link": "https://uk.indeed.com/viewjob?from=app-tracker-post_apply-appcard&hl=en&jk=351f180bf99eaa8a&tk=1j43a3avlg5i0800",
+    "resumeVersion": { "id": 2, "title": "warehouse" }
+  }
+]
+
+
