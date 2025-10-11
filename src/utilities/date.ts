@@ -13,3 +13,14 @@ export function formatStringDate(date: string): string {
   const [year, month, day] = date.split("-");
   return `${day}/${month}/${year}`;
 }
+
+// Get follow up date
+
+export function getFollowUpDate(date: string): Date {
+  const dateApplied = new Date(date);
+
+  const followUpDate = new Date(dateApplied);
+  followUpDate.setDate(dateApplied.getDate() + 7);
+
+  return followUpDate;
+}

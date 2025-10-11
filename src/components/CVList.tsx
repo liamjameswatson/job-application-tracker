@@ -1,8 +1,15 @@
 import { useForm } from "react-hook-form";
 import { CV } from "../types/types";
-import { useState } from "react";
-function CVList() {
-  const [cvList, setcVList] = useState<CV[]>([]);
+// import { useEffect, useState } from "react";
+// import { useLocalStorage } from "../hooks/useLocalStorage";
+
+type CVListProps = {
+  onSetCVlist: React.Dispatch<React.SetStateAction<CV[]>>;
+  cvList: CV[];
+  onNewCV: (cv: CV) => void;
+};
+
+function CVList({ onSetCVlist, cvList, onNewCV }: CVListProps) {
   const {
     register,
     handleSubmit,
@@ -11,13 +18,14 @@ function CVList() {
 
   function onSubmit(data: CV) {
     const newCv: CV = { ...data, id: Date.now() };
-    setcVList((cvList) => [...cvList, newCv]);
-    localStorage.setItem("cvList", JSON.stringify(cvList));
+    // console.log("from CVLIST", newCv);
+    onSetCVlist((cvList) => [...cvList, newCv]);
+    onNewCV(newCv);
   }
 
   return (
     <div className="">
-      {cvList.map((cv) => (
+      {cvList?.map((cv) => (
         <p key={cv.id}>
           {cv.id}
           {cv.title}

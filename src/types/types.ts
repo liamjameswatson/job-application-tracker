@@ -1,3 +1,5 @@
+import { statuses } from "../constants/statuses";
+
 type CV = {
   id: number;
   title: string;
@@ -17,12 +19,18 @@ type Job = {
   location: string;
   platform: string;
   platformApplied: string;
+  followUpDate: Date;
   link: string;
   dateApplied: string;
   status: string;
   resumeVersion: CV;
   contact?: Contact;
   coverLetter?: string;
+  notes?: string;
 };
 
-export type { Job, CV, Contact };
+type Status = string;
+
+type Statuses = typeof statuses;
+
+export type { Job, CV, Contact, Status, Statuses };

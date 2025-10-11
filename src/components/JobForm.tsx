@@ -1,10 +1,13 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { DevTool } from "@hookform/devtools";
-import { Job } from "../types/types";
-import { JOB_DEFAULTS } from "../constants/jobDefaults"; //
-import cvsTempList from "../assets/cvs.json";
+import { CV, Job } from "../types/types";
+import { JOB_DEFAULTS } from "../constants/jobDefaults";
 import CVList from "./CVList";
+import { useLocalStorage } from "../hooks/useLocalStorage";
+import { Status } from "../types/types";
+import { getFollowUpDate } from "../utilities/date";
+import { statuses } from "../constants/statuses";
 
 type JobFormProps = {
   onCreateJob: (newJob: Job) => void;
@@ -23,6 +26,8 @@ function JobForm({
 }: JobFormProps) {
   // If editJob
 
+  const { setItem, getItem } = useLocalStorage();
+
   let editJobValues: Omit<Job, "id"> | undefined;
 
   if (jobToEdit) {
@@ -37,6 +42,7 @@ function JobForm({
     handleSubmit,
     formState: { errors },
     watch,
+    setValue,
   } = useForm<Job>({
     mode: "onChange",
     defaultValues: editJobValues ? editJobValues : JOB_DEFAULTS,
@@ -44,19 +50,42 @@ function JobForm({
 
   const [contact, setContact] = useState<boolean>(false);
   const [coverLetter, setCoverLetter] = useState<boolean>(false);
+  const [newCv, setNewCV] = useState<CV | null>(null);
+  const [statusList, setStatusList] = useState<Set<Status>>(new Set(statuses));
 
+  const [cvList, setcVList] = useState<CV[]>(() => {
+    return getItem<CV[]>("cvList") || [];
+  });
+
+  useEffect(() => {
+    setItem("cvList", cvList);
+  }, [cvList, setItem]);
+
+  useEffect(() => {
+    if (newCv) {
+      // console.log("New CV in parent:", newCv.title);
+      setValue("resumeVersion.title", newCv.title as string);
+    }
+  }, [newCv, setValue]);
 
   const cvValue = watch("resumeVersion.title");
 
   function onSubmit(data: Job) {
+    // follow up date
+    const followUpDate = getFollowUpDate(data.dateApplied);
+
+    const jobDataWithFollowUp = { ...data, followUpDate };
+
+    // To edit job
     if (jobToEdit !== null) {
-      const editJob: Job = { ...data, id: jobToEdit.id };
+      const editJob: Job = { ...jobDataWithFollowUp, id: jobToEdit.id };
       onEditJob(editJob);
       jobToEdit = null;
       onSetIsVisible(false);
       resetJobToEdit(null);
     } else {
-      const newJob: Job = { ...data, id: Date.now() };
+      // To create new job
+      const newJob: Job = { ...jobDataWithFollowUp, id: Date.now() };
 
       onCreateJob(newJob);
 
@@ -67,7 +96,7 @@ function JobForm({
 
   return (
     <>
-      ( // Container - overlay
+      ({/* Container Overlay */}
       <div
         className="fixed bg-black/90 min-h-screen inset-0 flex 
         items-center justify-center"
@@ -205,13 +234,16 @@ function JobForm({
               <label className="uppercase font-bold" htmlFor="status">
                 Status
               </label>
-              <input
+              <select
                 className="bg-blue-50 ring-2 ring-gray-600 focus:bg-blue-200 
                   rounded p-1"
                 id="status"
-                placeholder="status..."
                 {...register("status")}
-              />
+              >
+                {[...statusList].map((status) => (
+                  <option key={status}>{status}</option>
+                ))}
+              </select>
             </div>
 
             {/* DATE APPLIED */}
@@ -237,7 +269,7 @@ function JobForm({
               </label>
               <select
                 className="bg-blue-50 ring-2 ring-gray-600 focus:bg-blue-200 
-                  rounded p-1"
+                  rounded p-1 hover:bg-black"
                 id="resumeVersion"
                 {...register("resumeVersion.title", {
                   validate: (value) =>
@@ -248,8 +280,12 @@ function JobForm({
                   Select a CV...
                 </option>
                 <option>No CV</option>
-                {cvsTempList.map((cv) => (
-                  <option className="bg-red-500" key={cv.id} value={cv.title}>
+                {cvList.map((cv) => (
+                  <option
+                    className=" hover:bg-black"
+                    key={cv.id}
+                    value={cv.title}
+                  >
                     {cv.title}
                   </option>
                 ))}
@@ -258,7 +294,13 @@ function JobForm({
             </div>
 
             {/* ADD CV */}
-            {cvValue === "Add new CV" && <CVList />}
+            {cvValue === "Add new CV" && (
+              <CVList
+                onSetCVlist={setcVList}
+                cvList={cvList}
+                onNewCV={setNewCV}
+              />
+            )}
 
             {/* {-----------------------------------------------------------------------------------------------} */}
             {/* OR CV LIST FROM LOCAL STORAGE. LENGTH === 0 */}
@@ -389,10 +431,11 @@ function JobForm({
                 >
                   Cover Letter Content
                 </label>
-                <input
-                  className="bg-blue-50 ring-2 ring-gray-600 focus:bg-blue-200 
+                <textarea
+                  className="bg-blue-50 ring-2 ring-gray-600 
+                  focus:bg-blue-200 
                   rounded p-1"
-                  type="text-area"
+                  rows={4}
                   id="coverLetterContent"
                   placeholder="Cover Letter Content"
                   {...register("coverLetter")}
@@ -400,6 +443,19 @@ function JobForm({
               </div>
             </div>
             {/* END OF COVER LETTER */}
+            <div className="flex flex-col gap-1">
+              <label className="uppercase font-bold " htmlFor="notes">
+                Notes
+              </label>
+              <textarea
+                className="bg-blue-50 ring-2 ring-gray-600 focus:bg-blue-200 rounded p-1"
+                id="notes"
+                rows={4}
+                placeholder="Anything else...."
+                {...register("notes")}
+              ></textarea>
+            </div>
+
             <button>{jobToEdit !== null ? "Update" : "Add"}</button>
             {/* <button>Submit</button> */}
           </form>

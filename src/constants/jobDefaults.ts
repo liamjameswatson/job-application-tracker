@@ -6,7 +6,7 @@ export const JOB_DEFAULTS = {
   platformApplied: "Devonsoils.com",
   link: "www.devonSoils.com",
   dateAppled: null,
-  status: "pending",
+  status: "applied",
   resumeVersion: { id: 0, title: "warehouse packer", link: "C/CV/doctor" },
   contact: { name: "", email: "", phoneNumber: "" },
   coverLetter: "",

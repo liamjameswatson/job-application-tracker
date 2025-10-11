@@ -1,6 +1,7 @@
 // import jobs from "../assets/jobs.json";
 import { Job } from "../types/types";
 import { formatStringDate } from "../utilities/date";
+import useJobs from "../hooks/useJobs";
 
 type JobListProps = {
   jobList: Job[];
@@ -10,17 +11,19 @@ type JobListProps = {
 };
 
 function JobList({
-  jobList,
+  // jobList,
   onSetIsVisible,
   onSetDeleteJob,
   onIsEditing,
 }: JobListProps) {
-  const jobs = jobList;
+  // const jobs = jobList;
+  // console.log(jobs);
 
+  const { jobs } = useJobs();
   return (
     <div className="p-5">
       {/* TABLE */}
-      <h1>Jobs List</h1>
+
       <div className="overflow-auto rounded-lg shadow hidden md:block">
         <table className="w-full">
           <thead>
