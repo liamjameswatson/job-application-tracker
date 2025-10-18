@@ -5,6 +5,7 @@ import { Job } from "./types/types";
 // import CVList from "./components/CVList";
 import { useLocalStorage } from "./hooks/useLocalStorage";
 import DailyCheck from "./components/DailyCheck";
+
 function App() {
   const { setItem, getItem } = useLocalStorage();
 

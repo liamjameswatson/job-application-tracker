@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 import JobForm from "./components/JobForm";
 import JobList from "./components/JobsList";
 import { Job } from "./types/types";
-// import CVList from "./components/CVList";
 import { useLocalStorage } from "./hooks/useLocalStorage";
 import DailyCheck from "./components/DailyCheck";
+import ModalButton from "./components/UI/ModalButton";
 
 function App() {
   const { setItem, getItem } = useLocalStorage();
@@ -38,16 +38,18 @@ function App() {
     setJobs(jobs.filter((jobs) => jobs.id !== id));
   }
 
-  // console.log({ jobs });
+
 
   return (
     <div className="relative w-max-screen min-h-screen bg-blue-200">
-      <button
-        className="btn-primary"
-        onClick={() => setIsvisible((prev) => !prev)}
-      >
-        Add Job +
-      </button>
+      <ModalButton text={"add job"}>
+        <JobForm
+          onCreateJob={createJob}
+          onEditJob={editJob}
+          jobToEdit={jobToEdit}
+          resetJobToEdit={setJobToEdit}
+        />
+      </ModalButton>
       <h1 className="h2-bold md:h1-bold text-center capitalize">
         JOB APPLICATION TRACKER
       </h1>
@@ -56,7 +58,6 @@ function App() {
         <JobForm
           onCreateJob={createJob}
           onEditJob={editJob}
-          onSetIsVisible={setIsvisible}
           jobToEdit={jobToEdit}
           resetJobToEdit={setJobToEdit}
         />
@@ -67,7 +68,6 @@ function App() {
         onSetDeleteJob={deleteJob}
         onIsEditing={setJobToEdit}
       />
-      {/* <CVList /> */}
     </div>
   );
 }
